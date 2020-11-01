@@ -1,0 +1,9 @@
+Makefile
+CMakeCache.txt
+CMakeFiles/
+reference/
+cmake_install.cmake
+llvmassignment
+test.bc
+test.c
+test.ll
