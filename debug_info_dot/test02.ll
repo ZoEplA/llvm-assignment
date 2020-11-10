@@ -1,5 +1,5 @@
-; ModuleID = './debug_info_dot/test01.c'
-source_filename = "./debug_info_dot/test01.c"
+; ModuleID = './debug_info_dot/test02.c'
+source_filename = "./debug_info_dot/test02.c"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-unknown-linux-gnu"
 
@@ -60,29 +60,34 @@ entry:
   store i32 2, i32* %op2, align 4, !dbg !46
   %0 = load i32, i32* %x.addr, align 4, !dbg !47
   %cmp = icmp eq i32 %0, 3, !dbg !49
-  br i1 %cmp, label %if.then, label %if.end, !dbg !50
+  br i1 %cmp, label %if.then, label %if.else, !dbg !50
 
 if.then:                                          ; preds = %entry
   %1 = load i32 (i32, i32)*, i32 (i32, i32)** %a_fptr, align 8, !dbg !51
   store i32 (i32, i32)* %1, i32 (i32, i32)** %t_fptr, align 8, !dbg !53
   br label %if.end, !dbg !54
 
-if.end:                                           ; preds = %if.then, %entry
-  %2 = load i32 (i32, i32)*, i32 (i32, i32)** %t_fptr, align 8, !dbg !55
-  %cmp1 = icmp ne i32 (i32, i32)* %2, null, !dbg !57
-  br i1 %cmp1, label %if.then2, label %if.end3, !dbg !58
+if.else:                                          ; preds = %entry
+  %2 = load i32 (i32, i32)*, i32 (i32, i32)** %s_fptr, align 8, !dbg !55
+  store i32 (i32, i32)* %2, i32 (i32, i32)** %t_fptr, align 8, !dbg !57
+  br label %if.end
+
+if.end:                                           ; preds = %if.else, %if.then
+  %3 = load i32 (i32, i32)*, i32 (i32, i32)** %t_fptr, align 8, !dbg !58
+  %cmp1 = icmp ne i32 (i32, i32)* %3, null, !dbg !60
+  br i1 %cmp1, label %if.then2, label %if.end3, !dbg !61
 
 if.then2:                                         ; preds = %if.end
-  call void @llvm.dbg.declare(metadata i32* %result, metadata !59, metadata !DIExpression()), !dbg !62
-  %3 = load i32 (i32, i32)*, i32 (i32, i32)** %t_fptr, align 8, !dbg !63
-  %4 = load i32, i32* %op1, align 4, !dbg !64
-  %5 = load i32, i32* %op2, align 4, !dbg !65
-  %call = call i32 %3(i32 %4, i32 %5), !dbg !63
-  store i32 %call, i32* %result, align 4, !dbg !62
-  br label %if.end3, !dbg !66
+  call void @llvm.dbg.declare(metadata i32* %result, metadata !62, metadata !DIExpression()), !dbg !65
+  %4 = load i32 (i32, i32)*, i32 (i32, i32)** %t_fptr, align 8, !dbg !66
+  %5 = load i32, i32* %op1, align 4, !dbg !67
+  %6 = load i32, i32* %op2, align 4, !dbg !68
+  %call = call i32 %4(i32 %5, i32 %6), !dbg !66
+  store i32 %call, i32* %result, align 4, !dbg !65
+  br label %if.end3, !dbg !69
 
 if.end3:                                          ; preds = %if.then2, %if.end
-  ret i32 0, !dbg !67
+  ret i32 0, !dbg !70
 }
 
 attributes #0 = { noinline nounwind optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
@@ -93,7 +98,7 @@ attributes #1 = { nounwind readnone speculatable willreturn }
 !llvm.ident = !{!8}
 
 !0 = distinct !DICompileUnit(language: DW_LANG_C99, file: !1, producer: "clang version 10.0.0 ", isOptimized: false, runtimeVersion: 0, emissionKind: FullDebug, enums: !2, retainedTypes: !3, splitDebugInlining: false, nameTableKind: None)
-!1 = !DIFile(filename: "debug_info_dot/test01.c", directory: "/home/zoe/Desktop/llvm-assignment")
+!1 = !DIFile(filename: "debug_info_dot/test02.c", directory: "/home/zoe/Desktop/llvm-assignment")
 !2 = !{}
 !3 = !{!4}
 !4 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: null, size: 64)
@@ -102,7 +107,7 @@ attributes #1 = { nounwind readnone speculatable willreturn }
 !7 = !{i32 1, !"wchar_size", i32 4}
 !8 = !{!"clang version 10.0.0 "}
 !9 = distinct !DISubprogram(name: "plus", scope: !10, file: !10, line: 2, type: !11, scopeLine: 2, flags: DIFlagPrototyped, spFlags: DISPFlagDefinition, unit: !0, retainedNodes: !2)
-!10 = !DIFile(filename: "./debug_info_dot/test01.c", directory: "/home/zoe/Desktop/llvm-assignment")
+!10 = !DIFile(filename: "./debug_info_dot/test02.c", directory: "/home/zoe/Desktop/llvm-assignment")
 !11 = !DISubroutineType(types: !12)
 !12 = !{!13, !13, !13}
 !13 = !DIBasicType(name: "int", size: 32, encoding: DW_ATE_signed)
@@ -147,16 +152,19 @@ attributes #1 = { nounwind readnone speculatable willreturn }
 !52 = distinct !DILexicalBlock(scope: !48, file: !10, line: 17, column: 17)
 !53 = !DILocation(line: 18, column: 15, scope: !52)
 !54 = !DILocation(line: 19, column: 5, scope: !52)
-!55 = !DILocation(line: 21, column: 9, scope: !56)
-!56 = distinct !DILexicalBlock(scope: !31, file: !10, line: 21, column: 9)
-!57 = !DILocation(line: 21, column: 16, scope: !56)
-!58 = !DILocation(line: 21, column: 9, scope: !31)
-!59 = !DILocalVariable(name: "result", scope: !60, file: !10, line: 22, type: !61)
-!60 = distinct !DILexicalBlock(scope: !56, file: !10, line: 21, column: 25)
-!61 = !DIBasicType(name: "unsigned int", size: 32, encoding: DW_ATE_unsigned)
-!62 = !DILocation(line: 22, column: 17, scope: !60)
-!63 = !DILocation(line: 22, column: 26, scope: !60)
-!64 = !DILocation(line: 22, column: 33, scope: !60)
-!65 = !DILocation(line: 22, column: 38, scope: !60)
-!66 = !DILocation(line: 23, column: 5, scope: !60)
-!67 = !DILocation(line: 24, column: 4, scope: !31)
+!55 = !DILocation(line: 20, column: 17, scope: !56)
+!56 = distinct !DILexicalBlock(scope: !48, file: !10, line: 19, column: 12)
+!57 = !DILocation(line: 20, column: 15, scope: !56)
+!58 = !DILocation(line: 23, column: 9, scope: !59)
+!59 = distinct !DILexicalBlock(scope: !31, file: !10, line: 23, column: 9)
+!60 = !DILocation(line: 23, column: 16, scope: !59)
+!61 = !DILocation(line: 23, column: 9, scope: !31)
+!62 = !DILocalVariable(name: "result", scope: !63, file: !10, line: 24, type: !64)
+!63 = distinct !DILexicalBlock(scope: !59, file: !10, line: 23, column: 25)
+!64 = !DIBasicType(name: "unsigned int", size: 32, encoding: DW_ATE_unsigned)
+!65 = !DILocation(line: 24, column: 17, scope: !63)
+!66 = !DILocation(line: 24, column: 26, scope: !63)
+!67 = !DILocation(line: 24, column: 33, scope: !63)
+!68 = !DILocation(line: 24, column: 38, scope: !63)
+!69 = !DILocation(line: 25, column: 5, scope: !63)
+!70 = !DILocation(line: 26, column: 4, scope: !31)
