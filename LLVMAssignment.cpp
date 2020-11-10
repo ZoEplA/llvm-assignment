@@ -240,20 +240,20 @@ struct FuncPtrPass : public ModulePass {
         if (callInst->getCalledFunction() != parentFunc){ // call函数与自己相等，需要去遍历那个函数再解析返回值
           Function* function = callInst->getCalledFunction();
           errs() << "[*] callinst Argument value  = " << function->getName() << "\n";
-          
-          for (Function::iterator bi = function->begin(), be = function->end(); bi != be; bi++){
-            for (BasicBlock::iterator ii = bi->begin(), ie = bi->end(); ii != ie; ii++){
-              Instruction *inst = dyn_cast<Instruction>(ii);
-              if(ReturnInst *RI = dyn_cast<ReturnInst>(inst)){
-                Value *Rvalue = RI->getReturnValue();
-                if (CallInst *callinst = dyn_cast<CallInst>(Rvalue)){
-                  Value *value = callinst->getOperand(index);
-                  if (Argument *argument = dyn_cast<Argument>(value))
-                    ParseArgument(argument);
-                }
-              }
-            }
-          }
+          ParseFunction_Ret(function);
+          // for (Function::iterator bi = function->begin(), be = function->end(); bi != be; bi++){
+          //   for (BasicBlock::iterator ii = bi->begin(), ie = bi->end(); ii != ie; ii++){
+          //     Instruction *inst = dyn_cast<Instruction>(ii);
+          //     if(ReturnInst *RI = dyn_cast<ReturnInst>(inst)){
+          //       Value *Rvalue = RI->getReturnValue();
+          //       if (CallInst *callinst = dyn_cast<CallInst>(Rvalue)){
+          //         Value *value = callinst->getOperand(index);
+          //         if (Argument *argument = dyn_cast<Argument>(value))
+          //           ParseArgument(argument);
+          //       }
+          //     }
+          //   }
+          // }
 
         }else{
         // call节点与自己相等，直接解析，自己递归
@@ -316,6 +316,9 @@ struct FuncPtrPass : public ModulePass {
       else if (Argument *argument = dyn_cast<Argument>(value))//调用的是个函数
       {
         errs() << "[*] That is Argument  in parsecallinst.\n";
+        int index = argument->getArgNo();
+        Value* tmp_value = callinst->getArgOperand(index);
+        argument = dyn_cast<Argument>(tmp_value);
         ParseArgument(argument);
       }
       else if (CallInst *callInst = dyn_cast<CallInst>(value)) //调用给定的函数
