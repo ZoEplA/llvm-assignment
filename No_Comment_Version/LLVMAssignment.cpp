@@ -89,11 +89,6 @@ struct FuncPtrPass : public ModulePass {
   }
   
   bool runOnModule(Module &M) override {
-    // errs() << "Hello: ";
-    // errs().write_escaped(M.getName()) << '\n';
-    // M.dump();
-    // errs()<<"------------------------------\n";
-    // Function 迭代
     for (Module::iterator fi = M.begin(), fe = M.end(); fi != fe; fi++) // 函数列表iterator的类型定义，得到的fi是iterator定义可以继续用来定义,如果需要处理或者记录该类型的语句需要将一个iterator转换为一个类指针
     {   // Function *func_tmp = dyn_cast<Function>(fi); //相当于Function& func_tmp = *fi;
       for (Function::iterator bi = fi->begin(), be = fi->end(); bi != be; bi++)// for basicblock in function (function list)
@@ -162,6 +157,16 @@ struct FuncPtrPass : public ModulePass {
     }
   }
 
+  void ParseValue(Value *value){
+    if (PHINode *phiNode = dyn_cast<PHINode>(value)){
+      ParsePhiNode(phiNode);
+    }else if (Function *func = dyn_cast<Function>(value)){
+      Push_funcList(func->getName());
+    }else if (Argument *argument = dyn_cast<Argument>(value)){
+      ParseArgument(argument);
+    }
+  }
+
   // Φ节点
   void ParsePhiNode(PHINode* phiNode){
     // incoming_values()的返回值类型是op_range，返回的是phi节点可能的定义
@@ -197,16 +202,6 @@ struct FuncPtrPass : public ModulePass {
           }
         }
       }
-    }
-  }
-
-  void ParseValue(Value *value){
-    if (PHINode *phiNode = dyn_cast<PHINode>(value)){
-      ParsePhiNode(phiNode);
-    }else if (Function *func = dyn_cast<Function>(value)){
-      Push_funcList(func->getName());
-    }else if (Argument *argument = dyn_cast<Argument>(value)){
-      ParseArgument(argument);
     }
   }
 
